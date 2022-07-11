@@ -1,8 +1,9 @@
 use std::ops;
 
+#[derive(Copy, Clone)]
 struct Tuple{ pub x: f64, pub y: f64, pub z: f64, pub w: f64 }
 impl Tuple {
-  pub fn new(x: f64, y: f64, z: f64, w: f64) -> Tuple {
+  pub fn new(x: f64, y: f64, z: f64, w: f64) -> Self {
     Tuple{x: x, y: y, z: z, w: w}
   }
   pub fn is_point(&self) -> bool {
@@ -20,12 +21,12 @@ impl Tuple {
   }
   pub fn normalize(&self) -> Self {
     let m = self.magnitude();
-    Tuple::new(self.x / m, self.y / m, self.z / m, self.w /m) 
+    Tuple::new(self.x / m, self.y / m, self.z / m, self.w / m) 
   }
-  pub fn dot(&self, t: Tuple) -> f64 {
+  pub fn dot(&self, t: Self) -> f64 {
     self.x * t.x + self.y * t.y + self.z * t.z + self.w * t.w
   }
-  pub fn cross(&self, t: Tuple) -> Tuple {
+  pub fn cross(&self, t: Self) -> Self {
     Tuple::new(
       self.y * t.z - self.z * t.y,
       self.z * t.x - self.x * t.z,
@@ -205,7 +206,33 @@ fn cross_product_of_vectors() {
   assert!(v2.cross(v1).equals(vector(1.0, -2.0, 1.0)));
 }
 
+#[derive(Copy, Clone)]
+struct Projectile {
+  position: Tuple,
+  velocity: Tuple
+}
+
+#[derive(Copy, Clone)]
+struct Environment {
+  gravity: Tuple,
+  wind: Tuple
+}
+fn tick(env: Environment, proj: Projectile) -> Projectile {
+  let position = proj.position + proj.velocity;
+  let velocity = proj.velocity + env.gravity + env.wind;
+  Projectile{position, velocity}
+}
+
 fn main() {
-  
+  let mut p = Projectile{position: point(0.0, 1.0, 0.0), velocity: vector(1.0, 1.0, 0.0).normalize()};
+  let e = Environment{gravity: vector(0.0, -0.1, 0.0), wind: vector(-0.01, 0.0, 0.0)};
+  let mut tick_count = 0;
+  while p.position.y >= 0.0 {
+    println!("tick: {}, position(x,y): ({}, {})", tick_count, p.position.x, p.position.y);
+    p = tick(e, p);
+    tick_count += 1
+  }
+  println!("tick: {}, position(x,y): ({}, {})", tick_count, p.position.x, p.position.y);
+
 }
 
