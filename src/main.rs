@@ -83,7 +83,7 @@ fn vector(x: f64, y: f64, z: f64) -> Tuple {
   Tuple::new(x, y, z, 0.0)
 }
 fn color(red: f64, green: f64, blue: f64) -> Tuple {
-  Tuple::new(red, green, blue, 5.0)
+  Tuple::new(red, green, blue, 0.0)
 }
 
 #[test]
@@ -225,6 +225,24 @@ fn colors_are_tuples() {
   assert_eq!(c.green(), 0.4);
   assert_eq!(c.blue(), 1.7);
 }
+#[test]
+fn adding_colors() {
+  let c1 = color(0.9, 0.6, 0.75);
+  let c2 = color(0.7, 0.1, 0.25);
+  assert!((c1 + c2).equals(color(1.6, 0.7, 1.0)));
+}
+#[test]
+fn subtracting_colors() {
+  let c1 = color(0.9, 0.6, 0.75);
+  let c2 = color(0.7, 0.1, 0.25);
+  assert!((c1 - c2).equals(color(0.2, 0.5, 0.5)));
+}
+#[test]
+fn multipyling_a_color_by_a_scalar() {
+  let c = color(0.2, 0.3, 0.4);
+  assert!((c * 2.0).equals(color(0.4, 0.6, 0.8)));
+}
+
 #[derive(Copy, Clone)]
 struct Projectile {
   position: Tuple,
