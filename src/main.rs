@@ -34,6 +34,16 @@ impl Tuple {
       0.0 // vector
     )
   }
+  pub fn red(&self) -> f64 {
+    self.x
+  }
+  pub fn green(&self) -> f64 {
+    self.y
+  }
+  pub fn blue(&self) -> f64 {
+    self.z
+  }
+
 }
 impl ops::Add for Tuple {
   type Output = Self;
@@ -71,6 +81,9 @@ fn point(x: f64, y: f64, z: f64) -> Tuple {
 }
 fn vector(x: f64, y: f64, z: f64) -> Tuple {
   Tuple::new(x, y, z, 0.0)
+}
+fn color(red: f64, green: f64, blue: f64) -> Tuple {
+  Tuple::new(red, green, blue, 5.0)
 }
 
 #[test]
@@ -205,7 +218,13 @@ fn cross_product_of_vectors() {
   let v2 = vector(2.0, 3.0, 4.0);
   assert!(v2.cross(v1).equals(vector(1.0, -2.0, 1.0)));
 }
-
+#[test]
+fn colors_are_tuples() {
+  let c = color(-0.5, 0.4, 1.7);
+  assert_eq!(c.red(), -0.5);
+  assert_eq!(c.green(), 0.4);
+  assert_eq!(c.blue(), 1.7);
+}
 #[derive(Copy, Clone)]
 struct Projectile {
   position: Tuple,
