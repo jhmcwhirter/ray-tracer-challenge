@@ -76,6 +76,29 @@ impl ops::Div<f64> for Tuple {
   }
 }
 
+#[derive(Clone)]
+struct Canvas{ width: usize, length: usize, matrix: Vec<Vec<Tuple>>}
+impl Canvas{
+  // pub fn iter(&self) -> CanvasIter<'_> {
+  //   CanvasIter{canvas: self, row: 0, col: 0}
+  // }
+  pub fn new( width: usize, length: usize) -> Self {
+    let row = vec![color(0.0, 0.0, 0.0); width];
+    let matrix = vec![row; length];
+    Canvas{ width: width, length: length, matrix: matrix }
+  }
+}
+// struct CanvasIter<'a>{ canvas: &'a Canvas, row: i32, col: i32}
+// impl Iterator for CanvasIter {
+//   type Item = Tuple;
+
+//   fn next(self) -> Option<Self::Item> {
+//     if self.col + 1 == canvas.width {
+//       self.row = self.row + 1;
+//     }
+//   }
+// }
+
 fn point(x: f64, y: f64, z: f64) -> Tuple {
   Tuple::new(x, y, z, 1.0)
 }
@@ -241,6 +264,12 @@ fn subtracting_colors() {
 fn multipyling_a_color_by_a_scalar() {
   let c = color(0.2, 0.3, 0.4);
   assert!((c * 2.0).equals(color(0.4, 0.6, 0.8)));
+}
+#[test]
+fn creating_a_canvas() {
+  let c = Canvas::new(10, 20);
+  assert_eq!(c.width, 10);
+  assert_eq!(c.length, 20);
 }
 
 #[derive(Copy, Clone)]
