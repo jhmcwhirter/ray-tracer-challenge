@@ -76,42 +76,7 @@ impl ops::Div<f64> for Tuple {
   }
 }
 
-#[derive(Clone)]
-struct Canvas{ width: usize, length: usize, matrix: Vec<Vec<Tuple>>}
-impl Canvas{
-  pub fn iter(&self) -> CanvasIter<'_> {
-    CanvasIter{canvas: self, row: 0, col: 0}
-  }
-  pub fn new( width: usize, length: usize) -> Self {
-    let row = vec![color(0.0, 0.0, 0.0); width];
-    let matrix = vec![row; length];
-    Canvas{ width: width, length: length, matrix: matrix }
-  }
-  pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
-    self.matrix[x][y]
-  }
-  pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
-    self.matrix[x][y] = color;
-  }
-}
-struct CanvasIter<'a>{ canvas: &'a Canvas, row: usize, col: usize}
-impl Iterator for CanvasIter<'_> {
-  type Item = Tuple;
-
-  fn next(&mut self) -> Option<Self::Item> {
-    if self.col + 1 == self.canvas.width {
-      self.row += 1;
-      self.col = 0;
-    }
-    if self.row + 1 == self.canvas.length {
-      return None
-    }
-    let value = Some(self.canvas.matrix[self.row][self.col]);
-    self.col += 1;
-    value
-  }
-}
-
+// constructors
 fn point(x: f64, y: f64, z: f64) -> Tuple {
   Tuple::new(x, y, z, 1.0)
 }
@@ -278,6 +243,45 @@ fn multipyling_a_color_by_a_scalar() {
   let c = color(0.2, 0.3, 0.4);
   assert!((c * 2.0).equals(color(0.4, 0.6, 0.8)));
 }
+
+// Canvas
+
+#[derive(Clone)]
+struct Canvas{ width: usize, length: usize, matrix: Vec<Vec<Tuple>>}
+impl Canvas{
+  pub fn iter(&self) -> CanvasIter<'_> {
+    CanvasIter{canvas: self, row: 0, col: 0}
+  }
+  pub fn new( width: usize, length: usize) -> Self {
+    let row = vec![color(0.0, 0.0, 0.0); width];
+    let matrix = vec![row; length];
+    Canvas{ width: width, length: length, matrix: matrix }
+  }
+  pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
+    self.matrix[x][y]
+  }
+  pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
+    self.matrix[x][y] = color;
+  }
+}
+struct CanvasIter<'a>{ canvas: &'a Canvas, row: usize, col: usize}
+impl Iterator for CanvasIter<'_> {
+  type Item = Tuple;
+
+  fn next(&mut self) -> Option<Self::Item> {
+    if self.col + 1 == self.canvas.width {
+      self.row += 1;
+      self.col = 0;
+    }
+    if self.row + 1 == self.canvas.length {
+      return None
+    }
+    let value = Some(self.canvas.matrix[self.row][self.col]);
+    self.col += 1;
+    value
+  }
+}
+
 #[test]
 fn creating_a_canvas() {
   let c = Canvas::new(10, 20);
@@ -295,6 +299,8 @@ fn writing_pixels_to_a_canvas() {
   c.write_pixel(2, 3, red);
   assert!(c.pixel_at(2,3).equals(red));
 }
+
+
 
 #[derive(Copy, Clone)]
 struct Projectile {
