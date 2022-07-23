@@ -263,6 +263,10 @@ impl Canvas{
   pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
     self.matrix[x][y] = color;
   }
+  pub fn to_ppm(&self) -> String {
+    let mut ppm = "P3\n".to_owned() + &self.width.to_string() + &" " + &self.length.to_string() + &"\n255\n";
+    ppm
+  }
 }
 struct CanvasIter<'a>{ canvas: &'a Canvas, row: usize, col: usize}
 impl Iterator for CanvasIter<'_> {
@@ -299,7 +303,12 @@ fn writing_pixels_to_a_canvas() {
   c.write_pixel(2, 3, red);
   assert!(c.pixel_at(2,3).equals(red));
 }
-
+#[test]
+fn constructing_the_ppm_header() {
+  let c = Canvas::new(5, 3);
+  let ppm = c.to_ppm();
+  assert_eq!(ppm, "P3\n5 3\n255\n");
+}
 
 
 #[derive(Copy, Clone)]
