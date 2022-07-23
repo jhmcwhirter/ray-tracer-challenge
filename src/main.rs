@@ -87,6 +87,12 @@ impl Canvas{
     let matrix = vec![row; length];
     Canvas{ width: width, length: length, matrix: matrix }
   }
+  pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
+    self.matrix[x][y]
+  }
+  pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
+    self.matrix[x][y] = color;
+  }
 }
 struct CanvasIter<'a>{ canvas: &'a Canvas, row: usize, col: usize}
 impl Iterator for CanvasIter<'_> {
@@ -113,7 +119,7 @@ fn vector(x: f64, y: f64, z: f64) -> Tuple {
   Tuple::new(x, y, z, 0.0)
 }
 fn color(red: f64, green: f64, blue: f64) -> Tuple {
-  Tuple::new(red, green, blue, 0.0)
+  Tuple::new(red, green, blue, 0.0) // colors are also vectors, this might be a problem later
 }
 
 #[test]
@@ -277,9 +283,17 @@ fn creating_a_canvas() {
   let c = Canvas::new(10, 20);
   assert_eq!(c.width, 10);
   assert_eq!(c.length, 20);
-  for point in c.iter() {
-    assert!(point.equals(color(0.0, 0.0, 0.0)));
+  // all the pixels are black
+  for pixel in c.iter() { 
+    assert!(pixel.equals(color(0.0, 0.0, 0.0)));
   }
+}
+#[test]
+fn writing_pixels_to_a_canvas() {
+  let mut c = Canvas::new(10, 20);
+  let red = color(1.0, 0.0, 0.0);
+  c.write_pixel(2, 3, red);
+  assert!(c.pixel_at(2,3).equals(red));
 }
 
 #[derive(Copy, Clone)]
