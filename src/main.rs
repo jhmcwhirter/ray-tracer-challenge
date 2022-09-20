@@ -263,6 +263,9 @@ impl Canvas{
   pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
     self.matrix[y][x] = color;
   }
+  pub fn fill_with(color: Tuple) {
+
+  }
 
   // generate a ppm file
   pub fn to_ppm(&self) -> String {
@@ -287,9 +290,9 @@ impl Canvas{
         col = 0
       }
       println!("{}", col);
-      let red = constrain(p.red()).to_string() + " ";
-      let green = constrain(p.green()).to_string() + " ";
-      let blue = constrain(p.blue()).to_string() + " ";
+      let red = constrain(p.color.red()).to_string() + " ";
+      let green = constrain(p.color.green()).to_string() + " ";
+      let blue = constrain(p.color.blue()).to_string() + " ";
       ppm += &red;
       ppm += &green;
       ppm += &blue;
@@ -298,9 +301,10 @@ impl Canvas{
     ppm
   }
 }
+struct Pixel { x: usize, y: usize, color: Tuple }
 struct CanvasIter<'a> { canvas: &'a Canvas, col: usize, row: usize }
 impl Iterator for CanvasIter<'_> {
-  type Item = Tuple;
+  type Item = Pixel;
 
   fn next(&mut self) -> Option<Self::Item> {
     if self.col == self.canvas.width {
@@ -310,7 +314,7 @@ impl Iterator for CanvasIter<'_> {
     if self.row == self.canvas.length {
       return None
     }
-    let value = Some(self.canvas.matrix[self.row][self.col]);
+    let value = Some(Pixel{x: self.col, y: self.row, color: self.canvas.matrix[self.row][self.col]});
     self.col += 1;
     value
   }
@@ -323,7 +327,7 @@ fn creating_a_canvas() {
   assert_eq!(c.length, 20);
   // all the pixels are black
   for pixel in c.iter() { 
-    assert!(pixel.equals(color(0.0, 0.0, 0.0)));
+    assert!(pixel.color.equals(color(0.0, 0.0, 0.0)));
   }
 }
 #[test]
@@ -356,6 +360,20 @@ fn constructing_the_ppm_pixel_data() {
   assert_eq!(lines[3], "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ");
   assert_eq!(lines[4], "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 ");
   assert_eq!(lines[5], "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 ");
+}
+#[test]
+fn splitting_long_lines_in_ppm_files() {
+  let cols = 10;
+  let rows = 2;
+  let mut c = Canvas::new(10, 2);
+  let c1 = color(1.0, 0.8, 0.6);
+  
+  let ppm = c.to_ppm();
+  let lines: Vec<&str> = ppm.split("\n").collect();
+  assert_eq!(lines[3], "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
+  assert_eq!(lines[4], "153 255 204 153 255 204 153 255 204 153 255 204 153");
+  assert_eq!(lines[5], "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
+  assert_eq!(lines[6], "153 255 204 153 255 204 153 255 204 153 255 204 153");
 }
 
 // Projectile
