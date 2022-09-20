@@ -250,7 +250,7 @@ fn multipyling_a_color_by_a_scalar() {
 struct Canvas{ width: usize, length: usize, matrix: Vec<Vec<Tuple>>}
 impl Canvas{
   pub fn iter(&self) -> CanvasIter<'_> {
-    CanvasIter{canvas: self, row: 0, col: 0}
+    CanvasIter{canvas: self, col: 0, row: 0}
   }
   pub fn new( width: usize, length: usize) -> Self {
     let row = vec![color(0.0, 0.0, 0.0); width];
@@ -258,10 +258,10 @@ impl Canvas{
     Canvas{ width: width, length: length, matrix: matrix }
   }
   pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
-    self.matrix[x][y]
+    self.matrix[y][x]
   }
   pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
-    self.matrix[x][y] = color;
+    self.matrix[y][x] = color;
   }
 
   // generate a ppm file
@@ -269,7 +269,7 @@ impl Canvas{
     fn constrain(color: f64) -> i32 {
       const MAX: f64 = 255.00;
       const MIN: f64 = 0.0;
-      let mut out = color * MAX;
+      let mut out = (color * MAX).ceil();
       if out > MAX {
         out = MAX;
       }
@@ -279,18 +279,26 @@ impl Canvas{
       out as i32
     }
     let mut ppm = "P3\n".to_owned() + &self.width.to_string() + &" " + &self.length.to_string() + &"\n255\n";
+    let mut col = 0;
     for p in self.iter() {
+      
+      if col == self.width {
+        ppm += &"\n";
+        col = 0
+      }
+      println!("{}", col);
       let red = constrain(p.red()).to_string() + " ";
-      let blue = constrain(p.blue()).to_string() + " ";
       let green = constrain(p.green()).to_string() + " ";
+      let blue = constrain(p.blue()).to_string() + " ";
       ppm += &red;
-      ppm += &blue;
       ppm += &green;
+      ppm += &blue;
+      col += 1
     }
     ppm
   }
 }
-struct CanvasIter<'a> { canvas: &'a Canvas, row: usize, col: usize }
+struct CanvasIter<'a> { canvas: &'a Canvas, col: usize, row: usize }
 impl Iterator for CanvasIter<'_> {
   type Item = Tuple;
 
@@ -329,10 +337,25 @@ fn writing_pixels_to_a_canvas() {
 fn constructing_the_ppm_header() {
   let c = Canvas::new(5, 3);
   let ppm = c.to_ppm();
-  let mut lines: Vec<&str> = ppm.split("\n").collect();
+  let lines: Vec<&str> = ppm.split("\n").collect();
   assert_eq!(lines[0], "P3");
   assert_eq!(lines[1], "5 3");
   assert_eq!(lines[2], "255");
+}
+#[test]
+fn constructing_the_ppm_pixel_data() {
+  let mut c = Canvas::new(5, 3);
+  let c1 = color(1.5, 0.0, 0.0);
+  let c2 = color(0.0, 0.5, 0.0);
+  let c3 = color(-0.5, 0.0, 1.0);
+  c.write_pixel(0, 0, c1);
+  c.write_pixel(2, 1, c2);
+  c.write_pixel(4, 2, c3);
+  let ppm = c.to_ppm();
+  let lines: Vec<&str> = ppm.split("\n").collect();
+  assert_eq!(lines[3], "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ");
+  assert_eq!(lines[4], "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 ");
+  assert_eq!(lines[5], "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 ");
 }
 
 // Projectile
