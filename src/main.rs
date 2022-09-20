@@ -263,8 +263,13 @@ impl Canvas{
   pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
     self.matrix[y][x] = color;
   }
-  pub fn fill_with(color: Tuple) {
 
+  pub fn fill_with(&mut self, color: Tuple) {
+    for col in 0..self.width {
+      for row in 0..self.length {
+        self.write_pixel(col, row, color);
+      }
+    }
   }
 
   // generate a ppm file
@@ -363,11 +368,9 @@ fn constructing_the_ppm_pixel_data() {
 }
 #[test]
 fn splitting_long_lines_in_ppm_files() {
-  let cols = 10;
-  let rows = 2;
   let mut c = Canvas::new(10, 2);
   let c1 = color(1.0, 0.8, 0.6);
-  
+  c.fill_with(c1);
   let ppm = c.to_ppm();
   let lines: Vec<&str> = ppm.split("\n").collect();
   assert_eq!(lines[3], "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
