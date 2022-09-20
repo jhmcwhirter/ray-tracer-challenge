@@ -263,21 +263,43 @@ impl Canvas{
   pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
     self.matrix[x][y] = color;
   }
+
+  // generate a ppm file
   pub fn to_ppm(&self) -> String {
+    fn constrain(color: f64) -> i32 {
+      const MAX: f64 = 255.00;
+      const MIN: f64 = 0.0;
+      let mut out = color * MAX;
+      if out > MAX {
+        out = MAX;
+      }
+      if out < MIN {
+        out = MIN
+      }
+      out as i32
+    }
     let mut ppm = "P3\n".to_owned() + &self.width.to_string() + &" " + &self.length.to_string() + &"\n255\n";
+    for p in self.iter() {
+      let red = constrain(p.red()).to_string() + " ";
+      let blue = constrain(p.blue()).to_string() + " ";
+      let green = constrain(p.green()).to_string() + " ";
+      ppm += &red;
+      ppm += &blue;
+      ppm += &green;
+    }
     ppm
   }
 }
-struct CanvasIter<'a>{ canvas: &'a Canvas, row: usize, col: usize}
+struct CanvasIter<'a> { canvas: &'a Canvas, row: usize, col: usize }
 impl Iterator for CanvasIter<'_> {
   type Item = Tuple;
 
   fn next(&mut self) -> Option<Self::Item> {
-    if self.col + 1 == self.canvas.width {
+    if self.col == self.canvas.width {
       self.row += 1;
       self.col = 0;
     }
-    if self.row + 1 == self.canvas.length {
+    if self.row == self.canvas.length {
       return None
     }
     let value = Some(self.canvas.matrix[self.row][self.col]);
@@ -307,9 +329,13 @@ fn writing_pixels_to_a_canvas() {
 fn constructing_the_ppm_header() {
   let c = Canvas::new(5, 3);
   let ppm = c.to_ppm();
-  assert_eq!(ppm, "P3\n5 3\n255\n");
+  let mut lines: Vec<&str> = ppm.split("\n").collect();
+  assert_eq!(lines[0], "P3");
+  assert_eq!(lines[1], "5 3");
+  assert_eq!(lines[2], "255");
 }
 
+// Projectile
 
 #[derive(Copy, Clone)]
 struct Projectile {
