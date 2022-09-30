@@ -1,4 +1,5 @@
 use std::ops;
+use tuple::Tuple;
 
 #[derive(Clone)]
 pub struct Matrix{pub m: Vec<Vec<f64>>}
@@ -33,6 +34,13 @@ impl ops::Mul<Matrix> for Matrix {
       } 
     }
     m
+  }
+}
+impl ops::Mul<Tuple> for Matrix {
+  type Output = Tuple;
+  fn mul(self, _rhs: Tuple) -> Self::Output {
+    let a = self.m;
+    Tuple.new()
   }
 }
 
