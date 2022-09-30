@@ -23,12 +23,7 @@ impl ops::Mul<Matrix> for Matrix {
   fn mul(self, _rhs: Matrix) -> Self::Output {
     let a = self.m;
     let b = _rhs.m;
-    let mut m = Matrix{m: vec![
-      vec![0.0, 0.0, 0.0, 0.0],
-      vec![0.0, 0.0, 0.0, 0.0],
-      vec![0.0, 0.0, 0.0, 0.0],
-      vec![0.0, 0.0, 0.0, 0.0]
-    ]};
+    let mut m = Matrix{m: vec![vec![0.0; 4]; 4]};
     for i in 0..4 {
       for j in 0..4 {
         m.m[i][j] = a[i][0] * b[0][j] +

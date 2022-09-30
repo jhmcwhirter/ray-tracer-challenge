@@ -7,6 +7,7 @@ mod canvas;
 use canvas::Canvas;
 
 mod matrix;
+use matrix::Matrix;
 
 // Projectile
 
