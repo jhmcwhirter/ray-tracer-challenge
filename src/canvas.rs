@@ -29,7 +29,13 @@ impl Canvas{
 
   // generate a ppm file
   pub fn to_ppm(&self) -> String {
+    PPM::parse(&self).lines
+  }
+}
 
+struct ColorValue { val: String, len: usize }
+  
+  impl ColorValue {
     fn constrain(color: f64) -> i32 {
       const MAX: f64 = 255.00;
       const MIN: f64 = 0.0;
@@ -42,42 +48,65 @@ impl Canvas{
       }
       out as i32
     }
+    pub fn new(color: f64) -> ColorValue {
+      let color_string = Self::constrain(color).to_string();
+      let color_length = color_string.chars().count();
+      ColorValue{ val: color_string, len: color_length + 1}
+    }
+  }
 
-    fn whitespace(mut line_length: &usize) -> &'static str {
-      if line_length > &60 {
-        line_length = &0;
-        return "\n";
+struct PPM { lines: String}
+impl PPM {
+  pub fn parse(canvas: &Canvas) -> PPM {
+    const LINE_LIMIT: usize = 66;
+    fn whitespace(length: usize) -> &'static str {
+      if length > LINE_LIMIT {
+          "\n"
+        }
+        else {
+          " " 
+        }
+    }
+    fn new_length(ws: &str, line_length: usize, color_length: usize) -> usize {
+      if ws == "\n" {
+        0
       }
       else {
-        return " ";
+        line_length + color_length
       }
     }
-
-    struct ColorValue { val: String, len: usize }
-    impl ColorValue {
-      pub fn new(color: f64) -> ColorValue {
-        let color_string = constrain(color).to_string();
-        let color_length = color_string.chars().count() + 1;
-        ColorValue{ val: color_string, len: color_length }
-      }
-    }
-
-    let mut ppm = "P3\n".to_owned() + &self.width.to_string() + &" " + &self.length.to_string() + &"\n255\n";
+    let mut lines = "P3\n".to_owned() + &canvas.width.to_string() + &" " + &canvas.length.to_string() + &"\n255\n";
     let mut line_length = 0;
-    for p in self.iter() {
+    for p in canvas.iter() {
+      
+      // red
       let red = ColorValue::new(p.color.red());
+      let mut ws: &str;
+      ws = whitespace(line_length + red.len);
+      lines.push_str(&(red.val + ws));
+      line_length = new_length(ws, line_length, red.len);
+
+      // green
       let green = ColorValue::new(p.color.green());
+      ws = whitespace(line_length + green.len);
+      lines.push_str(&(green.val + ws));
+      line_length = new_length(ws, line_length, green.len);
+
+      // blue
       let blue = ColorValue::new(p.color.blue());
-      ppm.push_str(&(red.val + whitespace(&line_length)));
-      line_length += red.len;
-      ppm.push_str(&(green.val + whitespace(&line_length)));
-      line_length += green.len;
-      ppm.push_str(&(blue.val + whitespace(&line_length)));
-      line_length += blue.len;
+      if line_length + blue.len > LINE_LIMIT || p.x == canvas.width - 1 {
+        ws = "\n";
+      }
+      else {
+        ws = " "; 
+      }
+      lines.push_str(&(blue.val + ws));
+      line_length = new_length(ws, line_length, blue.len);
     }
-    ppm
+    PPM{lines: lines}
   }
 }
+
 struct Pixel { x: usize, y: usize, color: Tuple }
 
 struct CanvasIter<'a> { canvas: &'a Canvas, col: usize, row: usize }
@@ -136,9 +165,9 @@ fn constructing_the_ppm_pixel_data() {
   c.write_pixel(4, 2, c3);
   let ppm = c.to_ppm();
   let lines: Vec<&str> = ppm.split("\n").collect();
-  assert_eq!(lines[3], "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0 ");
-  assert_eq!(lines[4], "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0 ");
-  assert_eq!(lines[5], "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 ");
+  assert_eq!(lines[3], "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0");
+  assert_eq!(lines[4], "0 0 0 0 0 0 0 128 0 0 0 0 0 0 0");
+  assert_eq!(lines[5], "0 0 0 0 0 0 0 0 0 0 0 0 0 0 255");
 }
 #[test]
 fn splitting_long_lines_in_ppm_files() {
@@ -147,8 +176,15 @@ fn splitting_long_lines_in_ppm_files() {
   c.fill_with(c1);
   let ppm = c.to_ppm();
   let lines: Vec<&str> = ppm.split("\n").collect();
+  
   assert_eq!(lines[3], "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
   assert_eq!(lines[4], "153 255 204 153 255 204 153 255 204 153 255 204 153");
   assert_eq!(lines[5], "255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204");
   assert_eq!(lines[6], "153 255 204 153 255 204 153 255 204 153 255 204 153");
+}
+#[test]
+fn ppm_files_are_terminated_by_a_newline_character() {
+  let c = Canvas::new(5, 3);
+  let ppm = c.to_ppm();
+  assert_eq!(&ppm[ppm.len() - 1..ppm.len()], "\n");
 }
