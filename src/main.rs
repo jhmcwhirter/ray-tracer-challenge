@@ -6,6 +6,8 @@ use tuple::Tuple;
 mod canvas;
 use canvas::Canvas;
 
+mod matrix;
+
 // Projectile
 
 #[derive(Copy, Clone)]

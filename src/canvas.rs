@@ -1,4 +1,3 @@
-// Canvas
 use crate::tuple::Tuple;
 
 #[derive(Clone)]
