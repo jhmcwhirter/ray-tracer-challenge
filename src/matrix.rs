@@ -108,6 +108,13 @@ impl Matrix {
     m.m[2][3] = z;
     m
   }
+  pub fn scaling(x: f64, y: f64, z: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[0][0] = x;
+    m.m[1][1] = y;
+    m.m[2][2] = z;
+    m
+  }
 }
 impl ops::Mul<Self> for Matrix {
   type Output = Self;
