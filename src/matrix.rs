@@ -35,6 +35,13 @@ impl Matrix {
     }
     m
   }
+  pub fn determinant(&self) -> f64 {
+    let a = self.m[0][0];
+    let b = self.m[0][1];
+    let c = self.m[1][0];
+    let d = self.m[1][1];
+    a * d - b * c
+  }
 }
 impl ops::Mul<Self> for Matrix {
   type Output = Self;
@@ -210,4 +217,12 @@ fn transposing_the_identity_matrix() {
   let identity = Matrix::identity();
   let a = identity.transpose();
   assert!(a.equals(identity));
+}
+#[test]
+fn calculating_the_determinant_of_a_2x2_matrix() {
+  let a = Matrix{m: vec![
+    vec![1.0, 5.0],
+    vec![-3.0, 2.0]
+  ]};
+  assert_eq!(a.determinant(), 17.0);
 }
