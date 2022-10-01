@@ -4,7 +4,7 @@ use crate::tuple::Tuple;
 #[derive(Clone)]
 pub struct Matrix{pub m: Vec<Vec<f64>>}
 impl Matrix {
-  pub fn identity() -> Matrix {
+  pub fn identity() -> Self {
     Matrix{m: vec![
       vec![1.0, 0.0, 0.0, 0.0],
       vec![0.0, 1.0, 0.0, 0.0],
@@ -26,10 +26,19 @@ impl Matrix {
     } 
     return true;
   }
+  pub fn transpose(&self) -> Self {
+    let mut m = Matrix{m: vec![vec![0.0; 4]; 4]};
+    for i in 0..4 {
+      for j in 0..4 {
+        m.m[i][i] = self.m[j][i];
+      }
+    }
+    m
+  }
 }
-impl ops::Mul<Matrix> for Matrix {
+impl ops::Mul<Self> for Matrix {
   type Output = Self;
-  fn mul(self, _rhs: Matrix) -> Self::Output {
+  fn mul(self, _rhs: Self) -> Self::Output {
     let a = self.m;
     let b = _rhs.m;
     let mut m = Matrix{m: vec![vec![0.0; 4]; 4]};
@@ -179,4 +188,20 @@ fn multiplying_a_tuple_by_the_identity_matrix() {
   let t = Tuple::new(1.0, 2.0, 3.0, 4.0);
   let identity = Matrix::identity();
   assert!((identity * t).equals(t));
+}
+#[test]
+fn transposing_a_matrix() {
+  let a = Matrix{m: vec![
+    vec![0.0, 9.0, 3.0, 0.0],
+    vec![9.0, 8.0, 0.0, 8.0],
+    vec![1.0, 8.0, 5.0, 3.0],
+    vec![0.0, 0.0, 5.0, 8.0]
+  ]};
+  let b = Matrix{m: vec![
+    vec![0.0, 9.0, 1.0, 0.0],
+    vec![9.0, 8.0, 8.0, 0.0],
+    vec![3.0, 0.0, 5.0, 5.0],
+    vec![0.0, 8.0, 3.0, 8.0]
+  ]};
+  assert!(a.transpose().equals(b));
 }
