@@ -205,3 +205,9 @@ fn transposing_a_matrix() {
   ]};
   assert!(a.transpose().equals(b));
 }
+#[test]
+fn transposing_the_identity_matrix() {
+  let identity = Matrix::identity();
+  let a = identity.transpose();
+  assert!(a.equals(identity));
+}
