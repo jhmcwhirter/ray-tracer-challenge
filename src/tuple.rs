@@ -54,6 +54,9 @@ impl Tuple {
   pub fn color(red: f64, green: f64, blue: f64) -> Tuple {
     Tuple::new(red, green, blue, 0.0) // colors are also vectors, this might be a problem later
   }
+  pub fn to_string(&self) -> String {
+    "(".to_owned() + &self.x.to_string() + ", " + &self.y.to_string() + ", " + &self.z.to_string() + ", " + &self.w.to_string() + ")"
+  }
 }
 
 impl ops::Add for Tuple {

@@ -1,5 +1,5 @@
 use std::ops;
-use tuple::Tuple;
+use crate::tuple::Tuple;
 
 #[derive(Clone)]
 pub struct Matrix{pub m: Vec<Vec<f64>>}
@@ -40,7 +40,13 @@ impl ops::Mul<Tuple> for Matrix {
   type Output = Tuple;
   fn mul(self, _rhs: Tuple) -> Self::Output {
     let a = self.m;
-    Tuple.new()
+    let b = _rhs;
+    Tuple::new(
+      a[0][0] * b.x + a[0][1] * b.y + a[0][2] * b.z + a[0][3] * b.w,
+      a[1][0] * b.x + a[1][1] * b.y + a[1][2] * b.z + a[1][3] * b.w,
+      a[2][0] * b.x + a[2][1] * b.y + a[2][2] * b.z + a[2][3] * b.w,
+      a[3][0] * b.x + a[3][1] * b.y + a[3][2] * b.z + a[3][3] * b.w,
+    )
   }
 }
 
@@ -135,4 +141,16 @@ fn multiplying_two_matrices() {
     vec![16.0, 26.0, 46.0, 42.0]
   ]};
   assert!((a * b).equals(c));
+}
+#[test]
+fn multiplying_a_matrix_by_a_tuple() {
+  let a = Matrix{m: vec![
+    vec![1.0, 2.0, 3.0, 4.0],
+    vec![2.0, 4.0, 4.0, 2.0],
+    vec![8.0, 6.0, 4.0, 1.0],
+    vec![0.0, 0.0, 0.0, 1.0]
+  ]};
+  let t1 = Tuple::new(1.0, 2.0, 3.0, 1.0);
+  let t2 = Tuple::new(18.0, 24.0, 33.0, 1.0);
+  assert!((a * t1).equals(t2));
 }
