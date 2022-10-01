@@ -42,11 +42,20 @@ impl Matrix {
     m
   }
   pub fn determinant(&self) -> f64 {
-    let a = self.m[0][0];
-    let b = self.m[0][1];
-    let c = self.m[1][0];
-    let d = self.m[1][1];
-    a * d - b * c
+    if self.rows() == 2 {
+      let a = self.m[0][0];
+      let b = self.m[0][1];
+      let c = self.m[1][0];
+      let d = self.m[1][1];
+      a * d - b * c
+    }
+    else {
+      let mut det = 0.0;
+      for col in 0..self.cols() {
+        det += self.m[0][col] * self.cofactor(0, col);
+      }
+      det
+    }
   }
   pub fn submatrix(&self, row: usize, col: usize) -> Self {
     let mut m = Matrix{m: vec![]};
@@ -59,7 +68,7 @@ impl Matrix {
         if c == col {
           continue;
         }
-        println!("{}", self.m[r][c]);
+        //println!("{}", self.m[r][c]);
         m_row.push(self.m[r][c]);
       }
       m.m.push(m_row);
@@ -312,3 +321,30 @@ fn calculating_a_cofactor_of_a_3x3_matrix() {
   assert_eq!(a.minor(1, 0), 25.0);
   assert_eq!(a.cofactor(1, 0), -25.0);
 }
+#[test]
+fn calculating_the_determinant_of_a_3x3_matrix() {
+  let a = Matrix{m: vec![
+    vec![1.0, 2.0, 6.0],
+    vec![-5.0, 8.0, -4.0],
+    vec![2.0, 6.0, 4.0]
+  ]};
+  assert_eq!(a.cofactor(0, 0), 56.0);
+  assert_eq!(a.cofactor(0, 1), 12.0);
+  assert_eq!(a.cofactor(0, 2), -46.0);
+  assert_eq!(a.determinant(), -196.0);
+}
+#[test]
+fn calculating_the_determinant_of_a_4x4_matrix() {
+  let a = Matrix{m: vec![
+    vec![-2.0, -8.0, 3.0, 5.0],
+    vec![-3.0, 1.0, 7.0, 3.0],
+    vec![1.0, 2.0, -9.0, 6.0],
+    vec![-6.0, 7.0, 7.0, -9.0]
+  ]};
+  assert_eq!(a.cofactor(0, 0), 690.0);
+  assert_eq!(a.cofactor(0, 1), 447.0);
+  assert_eq!(a.cofactor(0, 2), 210.0);
+  assert_eq!(a.cofactor(0, 3), 51.0);
+  assert_eq!(a.determinant(), -4071.0);
+}
+
