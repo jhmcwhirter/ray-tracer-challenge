@@ -4,6 +4,14 @@ use crate::tuple::Tuple;
 #[derive(Clone)]
 pub struct Matrix{pub m: Vec<Vec<f64>>}
 impl Matrix {
+  pub fn identity() -> Matrix {
+    Matrix{m: vec![
+      vec![1.0, 0.0, 0.0, 0.0],
+      vec![0.0, 1.0, 0.0, 0.0],
+      vec![0.0, 0.0, 1.0, 0.0],
+      vec![0.0, 0.0, 0.0, 1.0]
+    ]}
+  }
   pub fn equals(&self, m: Self) -> bool {
     const EPSILON: f64 = 0.00001;
     if self.m.len() != m.m.len() || self.m[0].len() != m.m[0].len(){
@@ -153,4 +161,22 @@ fn multiplying_a_matrix_by_a_tuple() {
   let t1 = Tuple::new(1.0, 2.0, 3.0, 1.0);
   let t2 = Tuple::new(18.0, 24.0, 33.0, 1.0);
   assert!((a * t1).equals(t2));
+}
+#[test]
+fn multiplying_a_matrix_by_the_identity_matrix() {
+  let a = Matrix{m: vec![
+    vec![0.0, 1.0, 2.0, 4.0],
+    vec![1.0, 2.0, 4.0, 8.0],
+    vec![2.0, 4.0, 8.0, 16.0],
+    vec![4.0, 8.0, 16.0, 32.0]
+  ]};
+  let b = a.clone();
+  let identity = Matrix::identity();
+  assert!((a * identity).equals(b));
+}
+#[test]
+fn multiplying_a_tuple_by_the_identity_matrix() {
+  let t = Tuple::new(1.0, 2.0, 3.0, 4.0);
+  let identity = Matrix::identity();
+  assert!((identity * t).equals(t));
 }
