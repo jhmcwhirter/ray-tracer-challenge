@@ -14,7 +14,7 @@ impl Matrix {
   }
   pub fn equals(&self, m: Self) -> bool {
     const EPSILON: f64 = 0.00001;
-    if self.m.len() != m.m.len() || self.m[0].len() != m.m[0].len(){
+    if self.rows() != m.rows() || self.cols() != m.cols() {
       return false;
     }
     for (i, row) in self.m.iter().enumerate() {
@@ -41,6 +41,30 @@ impl Matrix {
     let c = self.m[1][0];
     let d = self.m[1][1];
     a * d - b * c
+  }
+  pub fn submatrix(&self, row: usize, col: usize) -> Self {
+    let mut m = Matrix{m: vec![]};
+    for r in 0..self.rows() {
+      let mut m_row = vec![]; 
+      if r == row {
+        continue;
+      } 
+      for c in 0..self.cols() {
+        if c == col {
+          continue;
+        }
+        println!("{}", self.m[r][c]);
+        m_row.push(self.m[r][c]);
+      }
+      m.m.push(m_row);
+    }
+    m
+  }
+  pub fn rows(&self) -> usize {
+    self.m.len()
+  }
+  pub fn cols(&self) -> usize {
+    self.m[0].len()
   }
 }
 impl ops::Mul<Self> for Matrix {
@@ -225,4 +249,32 @@ fn calculating_the_determinant_of_a_2x2_matrix() {
     vec![-3.0, 2.0]
   ]};
   assert_eq!(a.determinant(), 17.0);
+}
+#[test]
+fn a_submatrix_of_a_3x3_matrix_is_a_2x2_matrix() {
+  let a = Matrix{m: vec![
+    vec![1.0, 5.0, 0.0],
+    vec![-3.0, 2.0, 7.0],
+    vec![0.0, 6.0, -3.0]
+  ]};
+  let b = Matrix{m: vec![
+    vec![-3.0, 2.0],
+    vec![0.0, 6.0]
+  ]};
+  assert!(a.submatrix(0, 2).equals(b));
+}
+#[test]
+fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
+  let a = Matrix{m: vec![
+    vec![-6.0, 1.0, 1.0, 6.0],
+    vec![-8.0, 5.0, 8.0, 6.0],
+    vec![-1.0, 0.0, 8.0, 2.0],
+    vec![-7.0, 1.0, -1.0, 1.0]
+  ]};
+  let b = Matrix{m: vec![
+    vec![-6.0, 1.0, 6.0],
+    vec![-8.0, 8.0, 6.0],
+    vec![-7.0, -1.0, 1.0]
+  ]};
+  assert!(a.submatrix(2, 1).equals(b));
 }
