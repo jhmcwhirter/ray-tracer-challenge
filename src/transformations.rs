@@ -95,18 +95,43 @@ fn a_shearing_transformation_moves_y_in_proportion_to_x() {
   let p = Tuple::point(2.0, 3.0, 4.0);
   assert!((s * p).equals(Tuple::point(2.0, 5.0, 4.0)));
 }
+#[test]
 fn a_shearing_transformation_moves_y_in_proportion_to_z() {
   let s = Matrix::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
   let p = Tuple::point(2.0, 3.0, 4.0);
   assert!((s * p).equals(Tuple::point(2.0, 7.0, 4.0)));
 }
+#[test]
 fn a_shearing_transformation_moves_z_in_proportion_to_x() {
   let s = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
   let p = Tuple::point(2.0, 3.0, 4.0);
   assert!((s * p).equals(Tuple::point(2.0, 3.0, 6.0)));
 }
+#[test]
 fn a_shearing_transformation_moves_z_in_proportion_to_y() {
   let s = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
   let p = Tuple::point(2.0, 3.0, 4.0);
   assert!((s * p).equals(Tuple::point(2.0, 3.0, 7.0)));
+}
+#[test]
+fn individual_transformations_are_applied_in_sequence() {
+  let p = Tuple::point(1.0, 0.0, 1.0);
+  let a = Matrix::rotation_x(PI/2.0);
+  let b = Matrix::scaling(5.0, 5.0, 5.0);
+  let c = Matrix::translation(10.0, 5.0, 7.0);
+  let p2 = a * p;
+  assert!(p2.equals(Tuple::point(1.0, -1.0, 0.0)));
+  let p3 = b * p2;
+  assert!(p3.equals(Tuple::point(5.0, -5.0, 0.0)));
+  let p4 = c * p3;
+  assert!(p4.equals(Tuple::point(15.0, 0.0, 7.0)));
+}
+#[test]
+fn chained_transformations_must_be_applied_in_reverse_order() {
+  let p = Tuple::point(1.0, 0.0, 1.0);
+  let a = Matrix::rotation_x(PI/2.0);
+  let b = Matrix::scaling(5.0, 5.0, 5.0);
+  let c = Matrix::translation(10.0, 5.0, 7.0);
+  let t = c * b * a;
+  assert!((t * p).equals(Tuple::point(15.0, 0.0, 7.0)));
 }
