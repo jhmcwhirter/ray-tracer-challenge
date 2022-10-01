@@ -9,6 +9,8 @@ use canvas::Canvas;
 mod matrix;
 use matrix::Matrix;
 
+mod transformations;
+
 // Projectile
 
 #[derive(Copy, Clone)]

@@ -68,7 +68,6 @@ impl Matrix {
         if c == col {
           continue;
         }
-        //println!("{}", self.m[r][c]);
         m_row.push(self.m[r][c]);
       }
       m.m.push(m_row);
@@ -100,6 +99,13 @@ impl Matrix {
         m.m[col][row] = c / self.determinant();
       }
     }
+    m
+  }
+  pub fn translation(x: f64, y: f64, z: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[0][3] = x;
+    m.m[1][3] = y;
+    m.m[2][3] = z;
     m
   }
 }
