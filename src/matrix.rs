@@ -139,6 +139,16 @@ impl Matrix {
     m.m[1][1] = f64::cos(r);
     m
   }
+  pub fn shearing(xy: f64, xz: f64, yx: f64, yz: f64, zx: f64, zy: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[0][1] = xy;
+    m.m[0][2] = xz;
+    m.m[1][0] = yx;
+    m.m[1][2] = yz;
+    m.m[2][0] = zx;
+    m.m[2][1] = zy;
+    m
+  }
 }
 impl ops::Mul<Self> for Matrix {
   type Output = Self;

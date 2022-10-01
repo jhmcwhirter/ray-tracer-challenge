@@ -77,3 +77,36 @@ fn rotating_a_point_around_the_z_axis() {
   assert!((hq * p).equals(Tuple::point(-(f64::sqrt(2.0) / 2.0), f64::sqrt(2.0) / 2.0, 0.0)));
   assert!((fq * p).equals(Tuple::point(-1.0, 0.0, 0.0)));
 }
+#[test]
+fn a_shearing_transformation_moves_x_in_proportion_to_y() {
+  let s = Matrix::shearing(1.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(5.0, 3.0, 4.0)));
+}
+#[test]
+fn a_shearing_transformation_moves_x_in_proportion_to_z() {
+  let s = Matrix::shearing(0.0, 1.0, 0.0, 0.0, 0.0, 0.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(6.0, 3.0, 4.0)));
+}
+#[test]
+fn a_shearing_transformation_moves_y_in_proportion_to_x() {
+  let s = Matrix::shearing(0.0, 0.0, 1.0, 0.0, 0.0, 0.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(2.0, 5.0, 4.0)));
+}
+fn a_shearing_transformation_moves_y_in_proportion_to_z() {
+  let s = Matrix::shearing(0.0, 0.0, 0.0, 1.0, 0.0, 0.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(2.0, 7.0, 4.0)));
+}
+fn a_shearing_transformation_moves_z_in_proportion_to_x() {
+  let s = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(2.0, 3.0, 6.0)));
+}
+fn a_shearing_transformation_moves_z_in_proportion_to_y() {
+  let s = Matrix::shearing(0.0, 0.0, 0.0, 0.0, 0.0, 1.0);
+  let p = Tuple::point(2.0, 3.0, 4.0);
+  assert!((s * p).equals(Tuple::point(2.0, 3.0, 7.0)));
+}
