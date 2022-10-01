@@ -135,3 +135,12 @@ fn chained_transformations_must_be_applied_in_reverse_order() {
   let t = c * b * a;
   assert!((t * p).equals(Tuple::point(15.0, 0.0, 7.0)));
 }
+#[test]
+fn fluent_chaining_of_transformations() {
+  let p = Tuple::point(1.0, 0.0, 1.0);
+  let t = Matrix::identity()
+    .rotate_x(PI/2.0)
+    .scale(5.0, 5.0, 5.0)
+    .translate(10.0, 5.0, 7.0);
+  assert!((t * p).equals(Tuple::point(15.0, 0.0, 7.0)));
+}
