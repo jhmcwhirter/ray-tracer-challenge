@@ -26,6 +26,12 @@ impl Matrix {
     } 
     return true;
   }
+  pub fn rows(&self) -> usize {
+    self.m.len()
+  }
+  pub fn cols(&self) -> usize {
+    self.m[0].len()
+  }
   pub fn transpose(&self) -> Self {
     let mut m = Matrix{m: vec![vec![0.0; 4]; 4]};
     for i in 0..4 {
@@ -60,11 +66,16 @@ impl Matrix {
     }
     m
   }
-  pub fn rows(&self) -> usize {
-    self.m.len()
+  pub fn minor(&self, row: usize, col: usize) -> f64 {
+    self.submatrix(row, col).determinant()
   }
-  pub fn cols(&self) -> usize {
-    self.m[0].len()
+  pub fn cofactor(&self, row: usize, col: usize) -> f64 {
+    if (row + col) % 2 == 0 {
+      self.minor(row, col)
+    } 
+    else {
+      self.minor(row, col) * -1.0
+    }
   }
 }
 impl ops::Mul<Self> for Matrix {
@@ -277,4 +288,27 @@ fn a_submatrix_of_a_4x4_matrix_is_a_3x3_matrix() {
     vec![-7.0, -1.0, 1.0]
   ]};
   assert!(a.submatrix(2, 1).equals(b));
+}
+#[test]
+fn calculating_a_minor_of_a_3x3_matrix() {
+  let a = Matrix{m: vec![
+    vec![3.0, 5.0, 0.0],
+    vec![2.0, -1.0, -7.0],
+    vec![6.0, -1.0, 5.0]
+  ]};
+  let b = a.submatrix(1, 0);
+  assert_eq!(b.determinant(), 25.0);
+  assert_eq!(a.minor(1, 0), 25.0);
+}
+#[test]
+fn calculating_a_cofactor_of_a_3x3_matrix() {
+  let a = Matrix{m: vec![
+    vec![3.0, 5.0, 0.0],
+    vec![2.0, -1.0, -7.0],
+    vec![6.0, -1.0, 5.0]
+  ]};
+  assert_eq!(a.minor(0, 0), -12.0);
+  assert_eq!(a.cofactor(0, 0), -12.0);
+  assert_eq!(a.minor(1, 0), 25.0);
+  assert_eq!(a.cofactor(1, 0), -25.0);
 }
