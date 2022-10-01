@@ -1,3 +1,4 @@
+use std::f64::consts::PI;
 use crate::tuple::Tuple;
 use crate::matrix::Matrix;
 
@@ -44,4 +45,35 @@ fn reflection_is_scaling_by_a_negative_value() {
   let t = Matrix::scaling(-1.0, 1.0, 1.0);
   let p = Tuple::point(2.0, 3.0, 4.0);
   assert!((t * p).equals(Tuple::point(-2.0, 3.0, 4.0)));
+}
+#[test]
+fn rotating_a_point_around_the_x_axis() {
+  let p = Tuple::point(0.0, 1.0, 0.0);
+  let hq = Matrix::rotation_x(PI/4.0);
+  let fq = Matrix::rotation_x(PI/2.0);
+  assert!((hq * p).equals(Tuple::point(0.0, f64::sqrt(2.0) / 2.0, f64::sqrt(2.0) / 2.0)));
+  assert!((fq * p).equals(Tuple::point(0.0, 0.0, 1.0)));
+}
+#[test]
+fn the_inverse_of_an_x_rotation_rotates_in_the_opposite_direction() {
+  let p = Tuple::point(0.0, 1.0, 0.0);
+  let hq = Matrix::rotation_x(PI/4.0);
+  let inv = hq.inverse();
+  assert!((inv * p).equals(Tuple::point(0.0, f64::sqrt(2.0) / 2.0, -(f64::sqrt(2.0) / 2.0))));
+}
+#[test]
+fn rotating_a_point_around_the_y_axis() {
+  let p = Tuple::point(0.0, 0.0, 1.0);
+  let hq = Matrix::rotation_y(PI/4.0);
+  let fq = Matrix::rotation_y(PI/2.0);
+  assert!((hq * p).equals(Tuple::point(f64::sqrt(2.0) / 2.0, 0.0, f64::sqrt(2.0) / 2.0)));
+  assert!((fq * p).equals(Tuple::point(1.0, 0.0, 0.0)));
+}
+#[test]
+fn rotating_a_point_around_the_z_axis() {
+  let p = Tuple::point(0.0, 1.0, 0.0);
+  let hq = Matrix::rotation_z(PI/4.0);
+  let fq = Matrix::rotation_z(PI/2.0);
+  assert!((hq * p).equals(Tuple::point(-(f64::sqrt(2.0) / 2.0), f64::sqrt(2.0) / 2.0, 0.0)));
+  assert!((fq * p).equals(Tuple::point(-1.0, 0.0, 0.0)));
 }

@@ -115,6 +115,30 @@ impl Matrix {
     m.m[2][2] = z;
     m
   }
+  pub fn rotation_x(r: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[1][1] = f64::cos(r);
+    m.m[1][2] = -f64::sin(r);
+    m.m[2][1] = f64::sin(r);
+    m.m[2][2] = f64::cos(r);
+    m
+  }
+  pub fn rotation_y(r: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[0][0] = f64::cos(r);
+    m.m[0][2] = f64::sin(r);
+    m.m[2][0] = -f64::sin(r);
+    m.m[2][2] = f64::cos(r);
+    m
+  }
+  pub fn rotation_z(r: f64) -> Matrix {
+    let mut m = Matrix::identity();
+    m.m[0][0] = f64::cos(r);
+    m.m[0][1] = -f64::sin(r);
+    m.m[1][0] = f64::sin(r);
+    m.m[1][1] = f64::cos(r);
+    m
+  }
 }
 impl ops::Mul<Self> for Matrix {
   type Output = Self;
