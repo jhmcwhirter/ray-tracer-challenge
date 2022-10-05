@@ -14,14 +14,14 @@ impl Canvas{
   pub fn pixel_at(&self, x: usize, y: usize) -> Tuple {
     self.matrix[y][x]
   }
-  pub fn write_pixel(&mut self, x: usize, y: usize, color: Tuple) {
-    self.matrix[y][x] = color;
+  pub fn write_pixel(&mut self, x: f64, y: f64, color: Tuple) {
+    self.matrix[y as usize][x as usize] = color;
   }
 
   pub fn fill_with(&mut self, color: Tuple) {
     for col in 0..self.width {
       for row in 0..self.length {
-        self.write_pixel(col, row, color);
+        self.write_pixel(col as f64, row as f64, color);
       }
     }
   }
