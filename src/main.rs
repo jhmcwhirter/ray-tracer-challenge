@@ -10,6 +10,8 @@ use canvas::Canvas;
 mod matrix;
 use matrix::Matrix;
 
+mod ray;
+
 mod transformations;
 
 // Clock

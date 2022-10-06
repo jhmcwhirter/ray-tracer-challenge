@@ -141,7 +141,7 @@ fn creating_a_canvas() {
 fn writing_pixels_to_a_canvas() {
   let mut c = Canvas::new(10, 20);
   let red = Tuple::color(1.0, 0.0, 0.0);
-  c.write_pixel(2, 3, red);
+  c.write_pixel(2.0, 3.0, red);
   assert!(c.pixel_at(2,3).equals(red));
 }
 #[test]
@@ -159,9 +159,9 @@ fn constructing_the_ppm_pixel_data() {
   let c1 = Tuple::color(1.5, 0.0, 0.0);
   let c2 = Tuple::color(0.0, 0.5, 0.0);
   let c3 = Tuple::color(-0.5, 0.0, 1.0);
-  c.write_pixel(0, 0, c1);
-  c.write_pixel(2, 1, c2);
-  c.write_pixel(4, 2, c3);
+  c.write_pixel(0.0, 0.0, c1);
+  c.write_pixel(2.0, 1.0, c2);
+  c.write_pixel(4.0, 2.0, c3);
   let ppm = c.to_ppm();
   let lines: Vec<&str> = ppm.split("\n").collect();
   assert_eq!(lines[3], "255 0 0 0 0 0 0 0 0 0 0 0 0 0 0");
