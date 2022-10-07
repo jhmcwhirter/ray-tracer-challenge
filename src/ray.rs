@@ -1,6 +1,6 @@
 use crate::tuple::Tuple;
 
-pub struct Ray{ pub origin: Tuple, direction: Tuple }
+pub struct Ray{ pub origin: Tuple, pub direction: Tuple }
 impl Ray{
   pub fn new(origin: Tuple, direction: Tuple) -> Ray {
     Ray{origin: origin, direction: direction}

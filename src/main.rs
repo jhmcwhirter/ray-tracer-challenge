@@ -11,7 +11,7 @@ mod matrix;
 use matrix::Matrix;
 
 mod ray;
-
+mod sphere;
 mod transformations;
 
 // Clock
