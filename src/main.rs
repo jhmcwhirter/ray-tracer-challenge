@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::fs;
 use std::f64::consts::PI;
 
@@ -13,6 +15,7 @@ use matrix::Matrix;
 mod ray;
 mod sphere;
 mod transformations;
+mod intersections;
 
 // Clock
 
