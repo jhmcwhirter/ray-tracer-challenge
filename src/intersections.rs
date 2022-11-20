@@ -8,8 +8,7 @@ pub trait Intersect {
 }
 
 pub enum Shape {
-  Sphere,
-  Cube
+  Sphere
 }
 
 #[derive(Clone)]
