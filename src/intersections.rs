@@ -9,7 +9,7 @@ pub trait Intersect {
 
 #[derive(Copy, Clone)]
 pub enum Shape {
-  Sphere
+  Sphere(Sphere)
 }
 
 pub fn hit(intersections: Vec<Intersection<Shape>>) -> Option<Intersection<Shape>>{
@@ -62,10 +62,42 @@ fn intersect_sets_the_object_on_the_intersection() {
 
 #[test]
 fn hit_when_all_intersections_have_positive_t() {
-  let s = Shape::Sphere::new();
+  let s = Shape::Sphere(Sphere::new());
   let i1 = Intersection{t: 1.0, object: s};
   let i2 = Intersection{t: 2.0, object: s};
   let xs = vec!(i1, i2);
   let i = hit(xs);
-  // assert_eq!(i, i1);
+  assert_eq!((i.unwrap()).t, i1.t);
+}
+
+#[test]
+fn hit_when_some_intersections_have_negative_t() {
+  let s = Shape::Sphere(Sphere::new());
+  let i1 = Intersection{t: -1.0, object: s};
+  let i2 = Intersection{t: 1.0, object: s};
+  let xs = vec!(i1, i2);
+  let i = hit(xs);
+  assert_eq!((i.unwrap()).t, i2.t);
+}
+
+#[test]
+fn hit_when_all_intersections_have_negative_t() {
+  let s = Shape::Sphere(Sphere::new());
+  let i1 = Intersection{t: -2.0, object: s};
+  let i2 = Intersection{t: -1.0, object: s};
+  let xs = vec!(i1, i2);
+  let i = hit(xs);
+  assert!(i.is_none());
+}
+
+#[test]
+fn the_hit_is_always_the_lowest_nonnegative_intersection() {
+  let s = Shape::Sphere(Sphere::new());
+  let i1 = Intersection{t: 5.0, object: s};
+  let i2 = Intersection{t: 7.0, object: s};
+  let i3 = Intersection{t: -3.0, object: s};
+  let i4 = Intersection{t: 2.0, object: s};
+  let xs = vec!(i1, i2, i3, i4);
+  let i = hit(xs);
+  assert_eq!((i.unwrap()).t, i4.t);
 }
