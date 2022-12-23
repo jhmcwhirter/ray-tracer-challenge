@@ -7,11 +7,29 @@ pub trait Intersect {
   fn intersects(&self, r: Ray) -> Vec<Intersection<&Self>>;
 }
 
+#[derive(Copy, Clone)]
 pub enum Shape {
   Sphere
 }
 
-#[derive(Clone)]
+pub fn hit(intersections: Vec<Intersection<Shape>>) -> Option<Intersection<Shape>>{
+  let mut t_min = f64::MAX;
+  let mut hit = intersections[0];
+  for i in intersections {
+    if i.t > 0.0 && i.t < t_min {
+      t_min = i.t;
+      hit = i.clone();
+    }
+  }
+  if t_min != f64::MAX {
+    Some(hit)
+  }
+  else {
+    None
+  }
+}
+
+#[derive(Copy, Clone)]
 pub struct Intersection<Shape> { pub t: f64, pub object: Shape }
 
 #[test]
@@ -40,4 +58,14 @@ fn intersect_sets_the_object_on_the_intersection() {
   assert_eq!(xs.len(), 2);
   assert!(ptr::eq(xs[0].object, &s));
   assert!(ptr::eq(xs[1].object, &s));
+}
+
+#[test]
+fn hit_when_all_intersections_have_positive_t() {
+  let s = Shape::Sphere::new();
+  let i1 = Intersection{t: 1.0, object: s};
+  let i2 = Intersection{t: 2.0, object: s};
+  let xs = vec!(i1, i2);
+  let i = hit(xs);
+  // assert_eq!(i, i1);
 }
