@@ -12,6 +12,9 @@ pub enum Shape {
   Sphere(Sphere)
 }
 
+// This function just returns the hit, it doesn't maintain a list o intersectiopns sorted by t value 
+// or sort it on demand as mentioned int he book, which may end up being an issue later on even though 
+// the tests are currently passing.
 pub fn hit(intersections: Vec<Intersection<Shape>>) -> Option<Intersection<Shape>>{
   let mut t_min = f64::MAX;
   let mut hit = intersections[0];

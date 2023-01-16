@@ -1,5 +1,6 @@
 use std::ops;
 use crate::tuple::Tuple;
+use crate::ray::Ray;
 
 #[derive(Clone)]
 pub struct Matrix{pub m: Vec<Vec<f64>>}
@@ -196,6 +197,17 @@ impl ops::Mul<Tuple> for Matrix {
       a[2][0] * b.x + a[2][1] * b.y + a[2][2] * b.z + a[2][3] * b.w,
       a[3][0] * b.x + a[3][1] * b.y + a[3][2] * b.z + a[3][3] * b.w,
     )
+  }
+}
+
+impl ops::Mul<Ray> for Matrix {
+  type Output = Ray;
+  fn mul(self, _rhs: Ray) -> Self::Output {
+    let a = self.clone();
+    let b = _rhs;
+    let origin = self * b.origin;
+    let direction = a * b.direction;
+    Ray::new(origin, direction)
   }
 }
 
